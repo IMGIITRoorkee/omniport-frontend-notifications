@@ -1,0 +1,8 @@
+{
+    "nomenclature": {
+        "name": "notifications",
+        "verboseName": "Notifications"
+    },
+    "baseUrl": "/notifications",
+    "source": "notifications/src/index"
+}
