@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
-import exampleReducer from './exampleReducer'
+import notificationList from './notificationList'
 
 const rootReducers = combineReducers({
-  exampleReducer
+  notificationList: notificationList
 })
 
 export default rootReducers

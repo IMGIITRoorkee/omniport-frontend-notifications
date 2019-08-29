@@ -1,0 +1,41 @@
+.notification {
+    margin-top: 5vh;
+}
+
+.notification-list{
+    width: 100%;
+}
+
+.notification-item {
+    position: relative!important;
+    display: flex !important;
+    padding-top: 0.75rem!important;
+    padding-bottom: 0.75rem!important;
+}
+
+.notification-item > img {
+    max-width: 2.5rem;
+    max-height: 2.5rem;
+}
+
+.notification-content{
+    width: 100% !important;
+    padding: 0 1.5rem!important;
+}
+
+.notification-header{
+    display: flex;
+}
+.notification-text {
+    text-align: left;
+    word-break: break-all;
+}
+
+.notification-read-btn {
+    position: absolute!important;
+    margin: 0 0.5em 0 0!important;
+    top: 50%;
+    right: 0;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}

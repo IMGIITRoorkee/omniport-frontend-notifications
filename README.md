@@ -1,3 +1,1 @@
-# Notifications
-
-> Omniport app frontend
+# omniport-frontend-notifications
