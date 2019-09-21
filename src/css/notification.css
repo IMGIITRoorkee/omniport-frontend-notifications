@@ -39,3 +39,10 @@
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
 }
+
+.margin-right-1rem {
+    margin-right: 1rem!important;
+}
+.margin-left-1rem {
+    margin-left: 1rem!important;
+}

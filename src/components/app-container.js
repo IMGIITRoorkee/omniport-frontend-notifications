@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { isBrowser } from 'react-device-detect'
 import { appDetails } from 'formula_one'
 import { getMoreNotification } from '../actions'
 import { urlNotificationSettings } from '../urls'
@@ -42,15 +43,34 @@ class AppContainer extends React.Component {
             <Grid.Column
               textAlign='right'
               verticalAlign='bottom'
-              textColor={getTheme()}
             >
+              {
+                isBrowser
+                  ? (
+                    <Header
+                      as={Link}
+                      color={getTheme()}
+                      verticalAlign='bottom'
+                      to={urlNotificationSettings()}
+                      size='small'
+                      styleName={'margin-right-1rem'}
+                    >
+                      Notifications settings
+                    </Header>
+                  )
+                  :
+                  null
+              }
               <Header
                 as={Link}
                 color={getTheme()}
+                verticalAlign='bottom'
+                // TODO
                 to={urlNotificationSettings()}
                 size='small'
+                styleName={'margin-left-1rem'}
               >
-                Notifications Settings
+                Mark all read
               </Header>
             </Grid.Column>
 
@@ -93,7 +113,7 @@ class AppContainer extends React.Component {
           {
             !notificationList.isLoaded && (
               <Segment basic as={List.Item}>
-                <Loader active />
+                <Loader active/>
               </Segment>
             )
           }
@@ -103,7 +123,7 @@ class AppContainer extends React.Component {
               (
                 !notificationList.list.next && (
                   <Segment basic textAlign='center' as={List.Item}>
-                    <Icon name='frown outline' />
+                    <Icon name='frown outline'/>
                     No more notifications available. You have scrolled enough
                     for today.
                   </Segment>
@@ -122,7 +142,7 @@ class AppContainer extends React.Component {
                       More
                     </Button.Content>
                     <Button.Content hidden>
-                      <Icon name='arrow down' />
+                      <Icon name='arrow down'/>
                     </Button.Content>
                   </Button>
                 </Segment>

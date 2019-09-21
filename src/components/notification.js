@@ -1,4 +1,5 @@
 import React from 'react'
+import path from 'path'
 import { connect } from 'react-redux'
 import { List, Image } from 'semantic-ui-react'
 import { getThemeObject } from 'formula_one'
@@ -7,9 +8,13 @@ import '../css/notification.css'
 import { appDetails } from '../../../../formula_one'
 
 class Notification extends React.Component {
+  state = {
+    notification: this.props.notification
+  }
   render () {
     // TODO: Handle read-unread
-    const { notification, history } = this.props
+    const { notification } = this.state
+    const { history} = this.props
     const unreadStyle = {
       backgroundColor: getThemeObject().hexCode + '10' // Opacity
     }
@@ -21,7 +26,7 @@ class Notification extends React.Component {
             notification.id,
             (res) => {
               console.info(res)
-              history.replace(notification.webOnclickUrl)
+              history.replace(path.join('/', notification.webOnclickUrl))
             },
             (err) => {
               console.error(err)
@@ -58,25 +63,34 @@ class Notification extends React.Component {
             {notification.template}
           </List.Description>
         </List.Content>
+        {
+          notification.unread
+          ?
+            <List.Icon
+              styleName='notification-read-btn'
+              verticalAlign='middle'
+              size='small'
+              name='envelope'
+              title='Mark read'
+              onClick={(event) => {
+                event.stopPropagation()
+                this.props.MarkRead(
+                  notification.id,
+                  (res) => {
+                    this.setState({
+                      notification: { ...this.state.notification, unread: false }
+                    })
+                  },
+                  (err) => {
+                    console.error('MARK_READ_ERR', err)
+                  }
+                )
+              }}
+            />
+          :
+            null
+        }
 
-        <List.Icon
-          styleName='notification-read-btn'
-          verticalAlign='middle'
-          size='small'
-          name={notification.unread ? 'envelope' : 'envelope open outline'}
-          onClick={(event) => {
-            event.preventDefault()
-            this.props.MarkRead(
-              notification.id,
-              (res) => {
-                console.log('MARK_READ_RES', res)
-              },
-              (err) => {
-                console.error('MARK_READ_ERR', err)
-              }
-            )
-          }}
-        />
       </List.Item>
     )
   }
