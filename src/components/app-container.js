@@ -22,24 +22,24 @@ import '../css/notification.css'
 import { getTheme } from '../../../../formula_one'
 
 class AppContainer extends React.Component {
-
+  
   showMore = () => {
     const { notificationList } = this.props
     this.props.GetMoreNotification(notificationList.list.next)
   }
-
+  
   render () {
     const { notificationList, history } = this.props
-
+    
     return (
       <div styleName='notification'>
         <Grid divided='vertically'>
           <Grid.Row columns={2} verticalAlign='bottom'>
-
+            
             <Grid.Column as={Header} textAlign='left' verticalAlign='bottom'>
               All notifications
             </Grid.Column>
-
+            
             <Grid.Column
               textAlign='right'
               verticalAlign='bottom'
@@ -58,8 +58,7 @@ class AppContainer extends React.Component {
                       Notifications settings
                     </Header>
                   )
-                  :
-                  null
+                  : null
               }
               <Header
                 as={Link}
@@ -73,12 +72,12 @@ class AppContainer extends React.Component {
                 Mark all read
               </Header>
             </Grid.Column>
-
+          
           </Grid.Row>
         </Grid>
-
+        
         <div>
-
+          
           {
             notificationList.list.results && (
               <List
@@ -93,7 +92,6 @@ class AppContainer extends React.Component {
                           ? notification.category.slug
                           : notification.category.appInfo.name
                       ).present || true // TODO: Remove this or true
-                      console.info('APPS PRESENT: ', appPresent)
                       return appPresent
                     })
                     .map(notification => {
@@ -109,7 +107,7 @@ class AppContainer extends React.Component {
               </List>
             )
           }
-
+          
           {
             !notificationList.isLoaded && (
               <Segment basic as={List.Item}>
@@ -117,7 +115,7 @@ class AppContainer extends React.Component {
               </Segment>
             )
           }
-
+          
           {
             notificationList.isLoaded && (
               (
@@ -149,9 +147,9 @@ class AppContainer extends React.Component {
               )
             )
           }
-
+        
         </div>
-
+      
       </div>
     )
   }

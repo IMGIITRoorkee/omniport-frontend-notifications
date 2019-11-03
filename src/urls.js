@@ -11,7 +11,7 @@ export function urlMarkRead () {
 }
 
 export function urlRegisterFCMToken () {
-  return `/api/notifications/register_token/`
+  return `/api/notifications/token/`
 }
 
 export function urlFirebaseMessagingServiceWorker () {

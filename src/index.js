@@ -8,7 +8,7 @@ import { whoami } from 'services/auth/src/actions'
 import PRoute from 'services/auth/pRoute'
 
 import App from './components/app'
-// import { initializeFirebase, initializePush } from './utils/push-notifications'
+import { initializeFirebase, initializePush } from './utils/push-notifications'
 import rootReducers from './reducers'
 
 const mapDisPatchToProps = dispatch => {
@@ -25,13 +25,15 @@ export default class AppRouter extends Component {
     super(props)
     this.store = createStore(rootReducers, applyMiddleware(thunk))
   }
-
+  
   componentDidMount () {
     this.props.whoami()
-    // initializeFirebase()
-    // initializePush()
+    if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator)
+      initializeFirebase()
+        .then(() => initializePush(this.store))
+        .catch(err => console.log(err)) // TODO
   }
-
+  
   render () {
     const { match } = this.props
     return (

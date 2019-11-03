@@ -15,7 +15,7 @@ class App extends React.PureComponent {
   componentDidMount () {
     this.props.InitialiseList()
   }
-
+  
   handleScroll = values => {
     const { notificationList } = this.props
     if (notificationList.isLoaded) {
@@ -26,7 +26,7 @@ class App extends React.PureComponent {
       }
     }
   }
-
+  
   render () {
     const creators = [
       {

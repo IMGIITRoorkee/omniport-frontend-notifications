@@ -1,69 +1,93 @@
-import firebase from 'firebase'
-import { registerToken } from '../actions'
+import firebase from 'firebase/app'
+import 'firebase/messaging'
+import { registerToken, unregisterToken, initialiseList } from '../actions'
 import { urlFirebaseMessagingServiceWorker } from '../urls'
-// import { urlFirebaseMessagingServiceWorker } from '../urls'
 
-export const initializeFirebase = () => {
-  const config = {
-    apiKey: 'AIzaSyDCoWDcyeRSFtjF66-cvoZIi3JedrZmnVk',
-    authDomain: 'notification-omni.firebaseapp.com',
-    databaseURL: 'https://notification-omni.firebaseio.com',
-    projectId: 'notification-omni',
-    storageBucket: 'notification-omni.appspot.com',
-    messagingSenderId: '272029473313'
-  }
-
-  if (!firebase.apps.length) {
-    try {
-      firebase.initializeApp(config)
-    } catch (e) {
-      console.error('NOTIFI ', e)
-    }
-  }
-}
-
-export const initializePush = () => {
+function setToken (store) {
   const messaging = firebase.messaging()
-
-  navigator.serviceWorker.register(urlFirebaseMessagingServiceWorker())
-    .then(registration => {
-      console.info('SW REG SUCC', registration)
-      messaging.useServiceWorker(registration)
-    })
-    .catch(err => {
-      console.error('SW REG ERR', err)
-    })
-
-  // Requesting permission for browser notifications
-  messaging
-    .requestPermission()
-    .then(() => {
-      console.info('Have Permission')
-      return messaging.getToken()
-    })
+  messaging.getToken()
     .then(token => {
-      console.log('FCM Token:', token)
-      registerToken(
-        token,
-        (res) => {
-          console.info('RES FCM Token:', token, res)
-        },
-        (err) => {
-          console.error('ERR FCM Token:', token, err)
-        }
+      store.dispatch(
+        registerToken(
+          token,
+          res => {
+            console.info('RES FCM Token reg:', token, res)
+          },
+          err => {
+            console.error('ERR FCM Token reg:', token, err)
+          }
+        )
       )
+      return token
     })
     .catch(error => {
       if (error.code === 'messaging/permission-blocked') {
+        // TODO: Use react toast message
         console.log('Please Unblock Notification Request Manually')
       } else {
         console.error('NOTIFI Error Occurred', error, error.code)
       }
     })
+}
 
+export const initializeFirebase = () => {
+  return new Promise((resolve, reject) => {
+    const config = require('./firebase-config')
+    if (!firebase.apps.length) {
+      try {
+        firebase.initializeApp(config)
+        resolve()
+      } catch (err) {
+        reject(err)
+      }
+    }
+  })
+}
+
+export const initializePush = (store) => {
+  const messaging = firebase.messaging()
+  
+  // Register service worker
+  navigator.serviceWorker.register(urlFirebaseMessagingServiceWorker())
+    .then(registration => {
+      messaging.useServiceWorker(registration)
+    })
+    .catch(err => {
+      console.error('SW REG ERR', err)
+    })
+  
+  // Requesting permission for browser notifications
+  Notification
+    .requestPermission()
+    .then(() => {
+      setToken(store)
+    })
+  
   // On receiving a message
   messaging
     .onMessage(payload => {
-      console.log('Notification Received', payload)
+      store.dispatch(initialiseList())
+    })
+  
+  // On token refresh
+  messaging
+    .onTokenRefresh(() => setToken(store))
+}
+
+export const deleteToken = (store) => {
+  const messaging = firebase.messaging()
+  
+  messaging.getToken()
+    .then(token => messaging.deleteToken(token))
+    .then(() => {
+      store.dispatch(
+        unregisterToken(
+          res => console.info('RES FCM Token unreg:', res),
+          err => console.error('ERR FCM Token unreg:', err)
+        )
+      )
+    })
+    .catch(reason => {
+      console.error(reason)
     })
 }

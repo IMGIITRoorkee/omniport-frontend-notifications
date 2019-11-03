@@ -5,7 +5,6 @@ import { urlMarkRead, urlNotificationList, urlRegisterFCMToken } from '../urls'
 
 export const initialiseList = () => {
   return dispatch => {
-    console.log('INIT', urlNotificationList())
     dispatch({
       type: 'SET_LOADED',
       payload: false
@@ -13,7 +12,6 @@ export const initialiseList = () => {
     axios
       .get(urlNotificationList())
       .then(res => {
-        console.log('SUCC', urlNotificationList(), res.data.results)
         dispatch({
           type: 'SET_NOTIFICATION_LIST',
           payload: {
@@ -23,7 +21,6 @@ export const initialiseList = () => {
         })
       })
       .catch(err => {
-        console.log('ERR', err)
         dispatch({
           type: 'SET_LOADED',
           payload: true
@@ -104,6 +101,37 @@ export const registerToken = (token, successCallback, errorCallback) => {
         dispatch({
           type: 'SET_REGISTERED',
           payload: false
+        })
+        errorCallback(err)
+      })
+  }
+}
+
+export const unregisterToken = (successCallback, errorCallback) => {
+  let headers = {
+    'X-CSRFToken': getCookie('csrftoken')
+  }
+  return dispatch => {
+    dispatch({
+      type: 'SET_REGISTERED',
+      payload: false
+    })
+    axios
+      .delete(
+        urlRegisterFCMToken(),
+        { headers: headers }
+      )
+      .then(res => {
+        dispatch({
+          type: 'SET_REGISTERED',
+          payload: false
+        })
+        successCallback(res)
+      })
+      .catch(err => {
+        dispatch({
+          type: 'SET_REGISTERED',
+          payload: true
         })
         errorCallback(err)
       })
