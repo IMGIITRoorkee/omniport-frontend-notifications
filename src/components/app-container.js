@@ -25,7 +25,10 @@ class AppContainer extends React.Component {
   
   showMore = () => {
     const { notificationList } = this.props
-    this.props.GetMoreNotification(notificationList.list.next)
+    if (notificationList.isLoaded && notificationList.list.next){
+      const url = new URL(notificationList.list.next)
+      this.props.GetMoreNotification(url.searchParams.get('page'))
+    }
   }
   
   render () {
@@ -64,7 +67,6 @@ class AppContainer extends React.Component {
                 as={Link}
                 color={getTheme()}
                 verticalAlign='bottom'
-                // TODO
                 to={urlNotificationSettings()}
                 size='small'
                 styleName={'margin-left-1rem'}
@@ -91,7 +93,7 @@ class AppContainer extends React.Component {
                         (notification.category.isApp)
                           ? notification.category.slug
                           : notification.category.appInfo.name
-                      ).present || true // TODO: Remove this or true
+                      ).present
                       return appPresent
                     })
                     .map(notification => {

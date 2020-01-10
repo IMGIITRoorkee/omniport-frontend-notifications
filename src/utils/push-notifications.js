@@ -1,5 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/messaging'
+import { toast } from 'react-semantic-toasts'
+
 import { registerToken, unregisterToken, initialiseList } from '../actions'
 import { urlFirebaseMessagingServiceWorker } from '../urls'
 
@@ -11,10 +13,8 @@ function setToken (store) {
         registerToken(
           token,
           res => {
-            console.info('RES FCM Token reg:', token, res)
           },
           err => {
-            console.error('ERR FCM Token reg:', token, err)
           }
         )
       )
@@ -22,10 +22,16 @@ function setToken (store) {
     })
     .catch(error => {
       if (error.code === 'messaging/permission-blocked') {
-        // TODO: Use react toast message
-        console.log('Please Unblock Notification Request Manually')
+        toast({
+          type: 'info',
+          title: 'Enable Push Notification',
+          description: `The notifications are blocked for this site.
+          Please unblock manually to receive push notifications.`,
+          animation: 'fade up',
+          time: 3000
+        })
       } else {
-        console.error('NOTIFI Error Occurred', error, error.code)
+        console.error('FCM token registration error: ', error, error.code)
       }
     })
 }
@@ -33,7 +39,7 @@ function setToken (store) {
 export const initializeFirebase = () => {
   return new Promise((resolve, reject) => {
     const config = require('./firebase-config')
-    if (!firebase.apps.length) {
+      if (!firebase.apps.length) {
       try {
         firebase.initializeApp(config)
         resolve()
@@ -53,7 +59,8 @@ export const initializePush = (store) => {
       messaging.useServiceWorker(registration)
     })
     .catch(err => {
-      console.error('SW REG ERR', err)
+      console.error(`Service worker ${urlFirebaseMessagingServiceWorker()}
+       not registered. ERROR: `, err)
     })
   
   // Requesting permission for browser notifications
@@ -82,12 +89,9 @@ export const deleteToken = (store) => {
     .then(() => {
       store.dispatch(
         unregisterToken(
-          res => console.info('RES FCM Token unreg:', res),
-          err => console.error('ERR FCM Token unreg:', err)
+          (_ => console.info('FCM token successfully unregistered')),
+          (_ => console.warn('FCM token could not be unregistered')),
         )
       )
-    })
-    .catch(reason => {
-      console.error(reason)
     })
 }

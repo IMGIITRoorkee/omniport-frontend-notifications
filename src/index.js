@@ -3,6 +3,8 @@ import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
 import { connect } from 'react-redux'
 import thunk from 'redux-thunk'
+import { toast } from 'react-semantic-toasts'
+
 
 import { whoami } from 'services/auth/src/actions'
 import PRoute from 'services/auth/pRoute'

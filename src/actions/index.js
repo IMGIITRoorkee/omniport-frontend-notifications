@@ -10,7 +10,7 @@ export const initialiseList = () => {
       payload: false
     })
     axios
-      .get(urlNotificationList())
+      .get(urlNotificationList(1))
       .then(res => {
         dispatch({
           type: 'SET_NOTIFICATION_LIST',
@@ -36,7 +36,7 @@ export const getMoreNotification = page => {
       payload: false
     })
     axios
-      .get(page)
+      .get(urlNotificationList(page))
       .then(res => {
         dispatch({
           type: 'SET_NOTIFICATION_LIST_NEXT_PAGE',

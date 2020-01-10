@@ -2,8 +2,8 @@ export function urlNotificationSettings () {
   return `/settings/manage_notifications/`
 }
 
-export function urlNotificationList () {
-  return `/api/notifications/user_notifications/`
+export function urlNotificationList (page) {
+  return `/api/notifications/user_notifications/?page=${page}`
 }
 
 export function urlMarkRead () {

@@ -18,12 +18,13 @@ class App extends React.PureComponent {
   
   handleScroll = values => {
     const { notificationList } = this.props
-    if (notificationList.isLoaded) {
-      if (
-        (1 - values.top) * values.scrollHeight <= 800 && notificationList.list.next
-      ) {
-        this.props.GetMoreNotification(notificationList.list.next)
-      }
+    if (
+      (1 - values.top) * values.scrollHeight <= 800
+      && notificationList.list.next
+      && notificationList.isLoaded
+    ) {
+      const url = new URL(notificationList.list.next)
+      this.props.GetMoreNotification(url.searchParams.get('page'))
     }
   }
   

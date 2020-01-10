@@ -3,18 +3,19 @@ import path from 'path'
 import { connect } from 'react-redux'
 import { List, Image } from 'semantic-ui-react'
 import { getThemeObject } from 'formula_one'
+import { toast } from 'react-semantic-toasts'
+
 import { markRead } from '../actions'
 import '../css/notification.css'
-import { appDetails } from '../../../../formula_one'
 
 class Notification extends React.Component {
   state = {
     notification: this.props.notification
   }
   render () {
-    // TODO: Handle read-unread
     const { notification } = this.state
     const { history} = this.props
+    const app = notification.category.appInfo
     const unreadStyle = {
       backgroundColor: getThemeObject().hexCode + '10' // Opacity
     }
@@ -30,7 +31,14 @@ class Notification extends React.Component {
             },
             (err) => {
               console.error(err)
-              // TODO: Error handler
+              toast({
+                type: 'error',
+                title: 'Error',
+                description: 'Could not mark notification as read.',
+                animation: 'fade up',
+                icon: 'frown up',
+                time: 3000
+              })
             }
           )
         }}
@@ -40,19 +48,18 @@ class Notification extends React.Component {
         styleName='notification-item'
       >
         <Image
-          // src={
-          //   appDetails(
-          //     notification.category.appInfo.verboseName
-          //   ).details.assets.logo
-          // }
-          src={'https://react.semantic-ui.com/images/avatar/small/christian.jpg' /* TODO */}
+          src={
+            `/static/${app.baseUrls.static}${
+              app.assets.logo
+            }`
+          }
         />
 
         <List.Content styleName='notification-content'>
           <List.Header styleName='notification-header'>
             {
               !(notification.category.isApp)
-                ? `${notification.category.appInfo.verboseName}: `
+                ? `${app.nomenclature.verboseName}: `
                 : ''
             }
             {
@@ -81,8 +88,15 @@ class Notification extends React.Component {
                       notification: { ...this.state.notification, unread: false }
                     })
                   },
-                  (err) => {
-                    console.error('MARK_READ_ERR', err)
+                  (_) => {
+                    toast({
+                      type: 'error',
+                      title: 'Error',
+                      description: 'Could not mark notification as read.',
+                      animation: 'fade up',
+                      icon: 'frown up',
+                      time: 3000
+                    })
                   }
                 )
               }}

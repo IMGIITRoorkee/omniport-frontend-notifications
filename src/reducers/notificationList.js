@@ -6,7 +6,6 @@ const initialState = {
 const notificationList = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_NOTIFICATION_LIST':
-      console.log('Reducer SET_NOTIFICATION_LIST')
       return action.payload
     case 'SET_NOTIFICATION_LIST_NEXT_PAGE':
       return {
