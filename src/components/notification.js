@@ -2,7 +2,7 @@ import React from 'react'
 import path from 'path'
 import { connect } from 'react-redux'
 import { List, Image } from 'semantic-ui-react'
-import { getThemeObject } from 'formula_one'
+import { getThemeObject, DefaultDP } from 'formula_one'
 import { toast } from 'react-semantic-toasts'
 
 import { markRead } from '../actions'
@@ -14,7 +14,7 @@ class Notification extends React.Component {
   }
   render () {
     const { notification } = this.state
-    const { history} = this.props
+    const { history } = this.props
     const app = notification.category.appInfo
     const unreadStyle = {
       backgroundColor: getThemeObject().hexCode + '07' // Opacity
@@ -25,11 +25,11 @@ class Notification extends React.Component {
         onClick={() => {
           this.props.MarkRead(
             notification.id,
-            (res) => {
+            res => {
               console.info(res)
               history.replace(path.join('/', notification.webOnclickUrl))
             },
-            (err) => {
+            err => {
               console.error(err)
               toast({
                 type: 'error',
@@ -42,69 +42,56 @@ class Notification extends React.Component {
             }
           )
         }}
-        style={
-          (notification && notification.unread) ? unreadStyle : {}
-        }
+        style={notification && notification.unread ? unreadStyle : {}}
         styleName='notification-item'
       >
-        <Image
-          src={
-            `/static/${app.baseUrls.static}${
-              app.assets.logo
-            }`
-          }
-        />
+        {app.assets ? (
+          <Image src={`/static/${app.baseUrls.static}${app.assets.logo}`} />
+        ) : (
+          <DefaultDP name={app.nomenclature.verboseName} />
+        )}
 
         <List.Content styleName='notification-content'>
           <List.Header styleName='notification-header'>
-            {
-              !(notification.category.isApp)
-                ? `${app.nomenclature.verboseName}: `
-                : ''
-            }
-            {
-              notification.category.name
-            }
+            {!notification.category.isApp
+              ? `${app.nomenclature.verboseName}: `
+              : ''}
+            {notification.category.name}
           </List.Header>
           <List.Description styleName='notification-text'>
             {notification.template}
           </List.Description>
         </List.Content>
-        {
-          notification.unread
-          ?
-            <List.Icon
-              styleName='notification-read-btn'
-              verticalAlign='middle'
-              size='small'
-              name='envelope'
-              title='Mark read'
-              onClick={(event) => {
-                event.stopPropagation()
-                this.props.MarkRead(
-                  notification.id,
-                  (res) => {
-                    this.setState({
-                      notification: { ...this.state.notification, unread: false }
-                    })
-                  },
-                  (_) => {
-                    toast({
-                      type: 'error',
-                      title: 'Error',
-                      description: 'Could not mark notification as read.',
-                      animation: 'fade up',
-                      icon: 'frown up',
-                      time: 3000
-                    })
-                  }
-                )
-              }}
-            />
-          :
-            null
-        }
-
+        {notification.unread ? (
+          <List.Icon
+            styleName='notification-read-btn'
+            verticalAlign='middle'
+            size='small'
+            name='envelope'
+            title='Mark read'
+            onClick={event => {
+              event.stopPropagation()
+              this.props.MarkRead(
+                notification.id,
+                res => {
+                  this.setState({
+                    notification: { ...this.state.notification, unread: false }
+                  })
+                },
+                _ => {
+                  toast({
+                    type: 'error',
+                    title: 'Error',
+                    description: 'Could not mark notification as read.',
+                    animation: 'fade up',
+                    icon: 'frown up',
+                    time: 3000
+                  })
+                }
+              )
+            }}
+          />
+        ) : null}
       </List.Item>
     )
   }
@@ -117,7 +104,4 @@ const mapDispatchToProps = dispatch => {
     }
   }
 }
-export default connect(
-  null,
-  mapDispatchToProps
-)(Notification)
+export default connect(null, mapDispatchToProps)(Notification)
