@@ -17,7 +17,7 @@ class Notification extends React.Component {
     const { history} = this.props
     const app = notification.category.appInfo
     const unreadStyle = {
-      backgroundColor: getThemeObject().hexCode + '10' // Opacity
+      backgroundColor: getThemeObject().hexCode + '07' // Opacity
     }
 
     return (
